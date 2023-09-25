@@ -79,8 +79,14 @@ def format_time_diff(diff):
     else:
         return "long time ago"
 
+def print_user_status(user_name, status):
+    if status=="is online":
+        print(f"{user_name} {status}")
+    else:
+        print(f"{user_name} was seen {status}")
+
 data = get_all_data()
 for user in data:
     user_name, diff = format_last_seen(user)
     status = format_time_diff(diff)
-    print(user_name, status)
+    print_user_status(user_name, status)
