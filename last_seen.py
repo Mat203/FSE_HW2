@@ -1,17 +1,29 @@
 import requests
 
-def get_users(count):
-    users = []
+def get_data(offset):
+    url = f"https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}"
+    response = requests.get(url)
+    data = response.json()
+    return data['data']
+
+def get_all_data():
     offset = 0
-    while len(users) < count:
-        url = f"https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}"
-        response = requests.get(url)
-        data = response.json()
-        users.extend(data['data'])
-        offset += 20  
-    return users[:count] 
+    all_data = []
 
-data = get_users(160)
+    while True:
+        data = get_data(offset)
 
+        if not data:
+            break
+
+        all_data.extend(data)
+        offset += len(data)
+
+    return all_data
+
+i=0
+data = get_all_data()
 for user in data:
     print(user)
+    i+=1
+    print(i)
