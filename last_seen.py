@@ -22,41 +22,24 @@ def get_all_data():
 
     return all_data
 
-def format_last_seen(user):
-    user_name = user['nickname']
-    last_seen_str = user['lastSeenDate']
-    if last_seen_str:
-        last_seen_str = last_seen_str.replace('T', ' ')
-        if '.' in last_seen_str:
-            time_parts = last_seen_str.split('.')
-            print(last_seen_str)
-            time_parts[1] = time_parts[1][:6] if len(time_parts[1]) > 6 else time_parts[1]
-            last_seen_str = '.'.join(time_parts)
-        last_seen_str = last_seen_str.split('+')[0]
-        last_seen = datetime.strptime(last_seen_str, '%Y-%m-%d %H:%M:%S.%f')
-        tz_info = last_seen_str[-6:]
-        sign = tz_info[0]
-        hours = int(tz_info[1:3])
-        last_seen_str = last_seen_str[:-6]
-    
-        if sign == '+':
-            last_seen -= timedelta(hours=hours)
-        elif sign == '-':
-            last_seen += timedelta(hours=hours)
-        print(last_seen)
-    
-    else:
-        last_seen = None
+def parse_last_seen_date(last_seen_str):
+    tz_info = last_seen_str[-6:]
+    last_seen_str = last_seen_str.replace('T', ' ')
+    if '.' in last_seen_str:
+        time_parts = last_seen_str.split('.')
+        time_parts[1] = time_parts[1][:6] if len(time_parts[1]) > 6 else time_parts[1]
+        last_seen_str = '.'.join(time_parts)
+    last_seen_str = last_seen_str.split('+')[0]
+    return datetime.strptime(last_seen_str, '%Y-%m-%d %H:%M:%S.%f'), tz_info
 
-    now = datetime.now()
-    diff = now - last_seen if last_seen else None
-
-    return user_name, diff
+def adjust_timezone(last_seen, tz_info):
+    sign = tz_info[0]
+    hours = int(tz_info[1:3])
+    
+    if sign == '+':
+        return last_seen - timedelta(hours=hours)
+    elif sign == '-':
+        return last_seen + timedelta(hours=hours)
 
 i=0
 data = get_all_data()
-for user in data:
-    print(user)
-    user_name, diff = format_last_seen(user)
-    i+=1
-    print(i)
