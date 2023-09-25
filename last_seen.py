@@ -40,6 +40,47 @@ def adjust_timezone(last_seen, tz_info):
         return last_seen - timedelta(hours=hours)
     elif sign == '-':
         return last_seen + timedelta(hours=hours)
+    
+def format_last_seen(user):
+    user_name = user['nickname']
+    last_seen_str = user['lastSeenDate']
+    
+    if last_seen_str:
+        last_seen, tz_info = parse_last_seen_date(last_seen_str)
+        last_seen = adjust_timezone(last_seen, tz_info)
+    else:
+        last_seen = None
 
-i=0
+    now = datetime.now()
+    diff = now - last_seen if last_seen else None
+
+    return user_name, diff
+
+def format_time_diff(diff):
+    if diff is None:
+        return "is online"
+    
+    seconds = diff.total_seconds()
+    
+    if seconds < 30:
+        return "just now"
+    elif seconds < 60:
+        return "less than a minute ago"
+    elif seconds < 3600:
+        return "couple of minutes ago"
+    elif seconds < 7200:
+        return "an hour ago"
+    elif diff.days == 0:
+        return "today"
+    elif diff.days == 1:
+        return "yesterday"
+    elif diff.days < 7:
+        return "this week"
+    else:
+        return "long time ago"
+
 data = get_all_data()
+for user in data:
+    user_name, diff = format_last_seen(user)
+    status = format_time_diff(diff)
+    print(user_name, status)
