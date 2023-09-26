@@ -1,6 +1,45 @@
 import requests
 from datetime import datetime, timedelta
 
+def choose_language():
+    languages = {
+        "1": "en-US",
+        "2": "uk-UA"
+    }
+
+    print("Please choose a language:")
+    print("1. English")
+    print("2. Ukrainian")
+    choice = input("Enter the language: ")
+
+    return languages.get(choice)
+
+localizations = {
+    "en-US": {
+        "IsOnline": "is online",
+        "JustNow": "was seen just now",
+        "LessThanAMinuteAgo": "was seen less than a minute ago",
+        "CoupleOfMinutesAgo": "was seen a couple of minutes ago",
+        "AnHourAgo": "was seen an hour ago",
+        "Today": "was seen today",
+        "Yesterday": "was seen yesterday",
+        "ThisWeek": "was seen this week",
+        "LongTimeAgo": "was seen long time ago"
+    },
+    "uk-UA": {
+        "IsOnline": "в мережі",
+        "JustNow": "був у мережі прямо зараз",
+        "LessThanAMinuteAgo": "був у мережіменше хвилини тому",
+        "CoupleOfMinutesAgo": "був у мережі кілька хвилин тому",
+        "AnHourAgo": "був у мережі годину тому",
+        "Today": "був у мережі сьогодні",
+        "Yesterday": "був у мережі вчора",
+        "ThisWeek": "був у мережі на цьому тижні",
+        "LongTimeAgo": "був у мережі давно"
+    }
+}
+
+
 def get_data(offset):
     url = f"https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}"
     response = requests.get(url)
@@ -40,7 +79,7 @@ def adjust_timezone(last_seen, tz_info):
         return last_seen - timedelta(hours=hours)
     elif sign == '-':
         return last_seen + timedelta(hours=hours)
-    
+
 def format_last_seen(user):
     user_name = user['nickname']
     last_seen_str = user['lastSeenDate']
@@ -56,37 +95,40 @@ def format_last_seen(user):
 
     return user_name, diff
 
-def format_time_diff(diff):
+def format_time_diff(diff, lang):
     if diff is None:
         return "is online"
     
     seconds = diff.total_seconds()
     
     if seconds < 30:
-        return "just now"
+        return localizations[lang]["JustNow"]
     elif seconds < 60:
-        return "less than a minute ago"
+        return localizations[lang]["LessThanAMinuteAgo"]
     elif seconds < 3600:
-        return "couple of minutes ago"
+        return localizations[lang]["CoupleOfMinutesAgo"]
     elif seconds < 7200:
-        return "an hour ago"
+        return localizations[lang]["AnHourAgo"]
     elif diff.days == 0:
-        return "today"
+        return localizations[lang]["Today"]
     elif diff.days == 1:
-        return "yesterday"
+        return localizations[lang]["Yesterday"]
     elif diff.days < 7:
-        return "this week"
+        return localizations[lang]["ThisWeek"]
     else:
-        return "long time ago"
+        return localizations[lang]["LongTimeAgo"]
 
 def print_user_status(user_name, status):
     if status=="is online":
+        status = localizations[lang]["IsOnline"]
         print(f"{user_name} {status}")
     else:
-        print(f"{user_name} was seen {status}")
+        print(f"{user_name} {status}")
 
-data = get_all_data()
-for user in data:
-    user_name, diff = format_last_seen(user)
-    status = format_time_diff(diff)
-    print_user_status(user_name, status)
+def main():
+    data = get_all_data()
+    lang = choose_language()
+    for user in data:
+        user_name, diff = format_last_seen(user)
+        status = format_time_diff(diff, lang)
+        print_user_status(user_name, status)
