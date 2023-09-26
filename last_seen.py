@@ -17,25 +17,25 @@ def choose_language():
 localizations = {
     "en-US": {
         "IsOnline": "is online",
-        "JustNow": "just now",
-        "LessThanAMinuteAgo": "less than a minute ago",
-        "CoupleOfMinutesAgo": "couple of minutes ago",
-        "AnHourAgo": "an hour ago",
-        "Today": "today",
-        "Yesterday": "yesterday",
-        "ThisWeek": "this week",
-        "LongTimeAgo": "long time ago"
+        "JustNow": "was seen just now",
+        "LessThanAMinuteAgo": "was seen less than a minute ago",
+        "CoupleOfMinutesAgo": "was seen a couple of minutes ago",
+        "AnHourAgo": "was seen an hour ago",
+        "Today": "was seen today",
+        "Yesterday": "was seen yesterday",
+        "ThisWeek": "was seen this week",
+        "LongTimeAgo": "was seen long time ago"
     },
     "uk-UA": {
         "IsOnline": "в мережі",
-        "JustNow": "прямо зараз",
-        "LessThanAMinuteAgo": "менше хвилини тому",
-        "CoupleOfMinutesAgo": "кілька хвилин тому",
-        "AnHourAgo": "годину тому",
-        "Today": "сьогодні",
-        "Yesterday": "вчора",
-        "ThisWeek": "на цьому тижні",
-        "LongTimeAgo": "давно"
+        "JustNow": "був у мережі прямо зараз",
+        "LessThanAMinuteAgo": "був у мережіменше хвилини тому",
+        "CoupleOfMinutesAgo": "був у мережі кілька хвилин тому",
+        "AnHourAgo": "був у мережі годину тому",
+        "Today": "був у мережі сьогодні",
+        "Yesterday": "був у мережі вчора",
+        "ThisWeek": "був у мережі на цьому тижні",
+        "LongTimeAgo": "був у мережі давно"
     }
 }
 
@@ -104,26 +104,26 @@ def format_time_diff(diff, lang):
     if seconds < 30:
         return localizations[lang]["JustNow"]
     elif seconds < 60:
-        return "less than a minute ago"
+        return localizations[lang]["LessThanAMinuteAgo"]
     elif seconds < 3600:
-        return "couple of minutes ago"
+        return localizations[lang]["CoupleOfMinutesAgo"]
     elif seconds < 7200:
-        return "an hour ago"
+        return localizations[lang]["AnHourAgo"]
     elif diff.days == 0:
-        return "today"
+        return localizations[lang]["Today"]
     elif diff.days == 1:
-        return "yesterday"
+        return localizations[lang]["Yesterday"]
     elif diff.days < 7:
-        return "this week"
+        return localizations[lang]["ThisWeek"]
     else:
-        return "long time ago"
+        return localizations[lang]["LongTimeAgo"]
 
 def print_user_status(user_name, status):
     if status=="is online":
         status = localizations[lang]["IsOnline"]
         print(f"{user_name} {status}")
     else:
-        print(f"{user_name} was seen {status}")
+        print(f"{user_name} {status}")
 
 data = get_all_data()
 lang = choose_language()
