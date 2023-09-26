@@ -1,6 +1,45 @@
 import requests
 from datetime import datetime, timedelta
 
+def choose_language():
+    languages = {
+        "1": "en-US",
+        "2": "uk-UA"
+    }
+
+    print("Please choose a language:")
+    print("1. English")
+    print("2. Ukrainian")
+    choice = input("Enter the language: ")
+
+    return languages.get(choice)
+
+localizations = {
+    "en-US": {
+        "IsOnline": "is online",
+        "JustNow": "just now",
+        "LessThanAMinuteAgo": "less than a minute ago",
+        "CoupleOfMinutesAgo": "couple of minutes ago",
+        "AnHourAgo": "an hour ago",
+        "Today": "today",
+        "Yesterday": "yesterday",
+        "ThisWeek": "this week",
+        "LongTimeAgo": "long time ago"
+    },
+    "uk-UA": {
+        "IsOnline": "в мережі",
+        "JustNow": "прямо зараз",
+        "LessThanAMinuteAgo": "менше хвилини тому",
+        "CoupleOfMinutesAgo": "кілька хвилин тому",
+        "AnHourAgo": "годину тому",
+        "Today": "сьогодні",
+        "Yesterday": "вчора",
+        "ThisWeek": "на цьому тижні",
+        "LongTimeAgo": "давно"
+    }
+}
+
+
 def get_data(offset):
     url = f"https://sef.podkolzin.consulting/api/users/lastSeen?offset={offset}"
     response = requests.get(url)
@@ -40,7 +79,7 @@ def adjust_timezone(last_seen, tz_info):
         return last_seen - timedelta(hours=hours)
     elif sign == '-':
         return last_seen + timedelta(hours=hours)
-    
+
 def format_last_seen(user):
     user_name = user['nickname']
     last_seen_str = user['lastSeenDate']
@@ -56,14 +95,14 @@ def format_last_seen(user):
 
     return user_name, diff
 
-def format_time_diff(diff):
+def format_time_diff(diff, lang):
     if diff is None:
         return "is online"
     
     seconds = diff.total_seconds()
     
     if seconds < 30:
-        return "just now"
+        return localizations[lang]["JustNow"]
     elif seconds < 60:
         return "less than a minute ago"
     elif seconds < 3600:
@@ -81,12 +120,14 @@ def format_time_diff(diff):
 
 def print_user_status(user_name, status):
     if status=="is online":
+        status = localizations[lang]["IsOnline"]
         print(f"{user_name} {status}")
     else:
         print(f"{user_name} was seen {status}")
 
 data = get_all_data()
+lang = choose_language()
 for user in data:
     user_name, diff = format_last_seen(user)
-    status = format_time_diff(diff)
+    status = format_time_diff(diff, lang)
     print_user_status(user_name, status)
