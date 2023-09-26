@@ -125,9 +125,10 @@ def print_user_status(user_name, status):
     else:
         print(f"{user_name} {status}")
 
-data = get_all_data()
-lang = choose_language()
-for user in data:
-    user_name, diff = format_last_seen(user)
-    status = format_time_diff(diff, lang)
-    print_user_status(user_name, status)
+def main():
+    data = get_all_data()
+    lang = choose_language()
+    for user in data:
+        user_name, diff = format_last_seen(user)
+        status = format_time_diff(diff, lang)
+        print_user_status(user_name, status)
