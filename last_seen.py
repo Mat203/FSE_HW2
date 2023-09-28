@@ -97,7 +97,7 @@ def format_last_seen(user):
 
 def format_time_diff(diff, lang):
     if diff is None:
-        return "is online"
+        return localizations[lang]["IsOnline"]
     
     seconds = diff.total_seconds()
     
@@ -120,7 +120,6 @@ def format_time_diff(diff, lang):
 
 def print_user_status(user_name, status):
     if status=="is online":
-        status = localizations[lang]["IsOnline"]
         print(f"{user_name} {status}")
     else:
         print(f"{user_name} {status}")
@@ -132,3 +131,6 @@ def main():
         user_name, diff = format_last_seen(user)
         status = format_time_diff(diff, lang)
         print_user_status(user_name, status)
+
+if __name__ == "__main__":
+    main()
