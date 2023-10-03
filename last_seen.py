@@ -62,14 +62,17 @@ def get_all_data():
     return all_data
 
 def parse_last_seen_date(last_seen_str):
-    tz_info = last_seen_str[-6:]
-    last_seen_str = last_seen_str.replace('T', ' ')
-    if '.' in last_seen_str:
-        time_parts = last_seen_str.split('.')
-        time_parts[1] = time_parts[1][:6] if len(time_parts[1]) > 6 else time_parts[1]
-        last_seen_str = '.'.join(time_parts)
-    last_seen_str = last_seen_str.split('+')[0]
-    return datetime.strptime(last_seen_str, '%Y-%m-%d %H:%M:%S.%f'), tz_info
+    datetime_str, tz_info = last_seen_str.split('+')
+
+    datetime_str = datetime_str.replace('T', ' ')
+    date_part, time_part = datetime_str.split('.')
+    time_part = time_part[:6]
+    datetime_str = f'{date_part}.{time_part}'
+
+    last_seen_date = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S.%f')
+
+    return last_seen_date, '+' + tz_info
+
 
 def adjust_timezone(last_seen, tz_info):
     sign = tz_info[0]

@@ -15,7 +15,7 @@ class TestGetData(unittest.TestCase):
 
 class TestParseLastSeenDate(unittest.TestCase):
     def test_Should_ReturnCorrectDTAndTZ_When_ParseLastSeenDateCalledWithValidString(self):
-        result, tz_info = last_seen.parse_last_seen_date('2023-09-25T17:26:28.123456+03:00')
+        result, tz_info = last_seen.parse_last_seen_date('2023-09-25T17:26:28.12345678+03:00')
         self.assertEqual(result, datetime(2023, 9, 25, 17, 26, 28, 123456))
         self.assertEqual(tz_info, '+03:00')
 
